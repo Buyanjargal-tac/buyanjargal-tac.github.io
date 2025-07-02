@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <title>Email Signature Image Export</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      justify-content: center;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .preview-wrapper {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .signature-box {
+      display: inline-block;
+      text-align: left;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Гарын үсгийн мэдээлэл</h2>
+    <input id="name" placeholder="Нэр" oninput="updateSignature()" />
+    <input id="title" placeholder="Албан тушаал" oninput="updateSignature()" />
+    <input id="email" placeholder="Имэйл" oninput="updateSignature()" />
+    <input id="phone" placeholder="Утас" oninput="updateSignature()" />
+    <input id="address" placeholder="Хаяг" oninput="updateSignature()" />
+
+    <div class="preview-wrapper">
+      <div id="signature" class="signature-box">
+        <div style="margin-bottom: 1em; font-size: 22px;">Хүндэтгэсэн,</div>
+        <table style="font-family: Arial, sans-serif; font-size: 18px;">
+          <tr>
+            <td style="padding-right: 16px;">
+              <img id="logo" src="logo.png" alt="Лого" width="100" />
+            </td>
+            <td style="padding-right: 17px; border-right: 1px solid #999;">
+              <div id="out_name" style="font-weight: bold; font-size: 20px;">Нэр</div>
+              <div id="out_title">Албан тушаал</div>
+            </td>
+            <td style="padding-left: 17px;">
+              <div><strong>Имэйл:</strong> <span id="out_email">email@example.com</span></div>
+              <div><strong>Утас:</strong> <span id="out_phone">+976 88112233</span></div>
+              <div><strong>Хаяг:</strong> <span id="out_address">Улаанбаатар хот</span></div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="buttons">
+        <button onclick="copyImage()">Зургаар хуулах</button>
+        <button onclick="downloadImage()">Зураг татах</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateSignature() {
+      document.getElementById("out_name").textContent = document.getElementById("name").value || "Нэр";
+      document.getElementById("out_title").textContent = document.getElementById("title").value || "Албан тушаал";
+      document.getElementById("out_email").textContent = document.getElementById("email").value || "email@example.com";
+      document.getElementById("out_phone").textContent = document.getElementById("phone").value || "+976 88112233";
+      document.getElementById("out_address").textContent = document.getElementById("address").value || "Улаанбаатар хот";
+    }
+
+    function downloadImage() {
+      const node = document.getElementById("signature");
+      html2canvas(node, { scale: 3, useCORS: true }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "signature.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+
+    function copyImage() {
+      const node = document.getElementById("signature");
+      html2canvas(node, { scale: 3, useCORS: true }).then(canvas => {
+        canvas.toBlob(blob => {
+          const item = new ClipboardItem({ "image/png": blob });
+          navigator.clipboard.write([item])
+            .then(() => alert("Зураг амжилттай хуулагдлаа!"))
+            .catch(err => alert("Хуулахад алдаа гарлаа: " + err));
+        });
+      });
+    }
+  </script>
+</body>
+</html>
