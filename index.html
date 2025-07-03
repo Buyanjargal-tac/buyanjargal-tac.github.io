@@ -2,60 +2,102 @@
 <html lang="mn">
 <head>
   <meta charset="UTF-8" />
-  <title>Email Signature Image Export</title>
+  <title>Гоёмсог Email Signature</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #eef2f5;
       padding: 2rem;
     }
+
     .container {
       max-width: 800px;
       margin: auto;
       background: white;
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
     }
+
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      text-align: center;
+      color: #333;
+    }
+
     input {
       width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      padding: 0.6rem;
+      margin-bottom: 0.75rem;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
     }
+
     .buttons {
       display: flex;
       gap: 1rem;
-      margin-top: 1rem;
       justify-content: center;
+      margin-top: 1.5rem;
     }
+
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       background: #0078d4;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
       cursor: pointer;
+      transition: 0.2s;
     }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    .signature-box {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 400px;
+      margin: auto;
+    }
+
+    .signature-box table {
+      width: 100%;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+
+    .signature-box td {
+      vertical-align: top;
+      padding: 8px;
+    }
+
+    .signature-box img {
+      border-radius: 8px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #444;
+    }
+
     .preview-wrapper {
       margin-top: 2rem;
-      text-align: center;
-    }
-    .signature-box {
-      display: inline-block;
       text-align: left;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #fff;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Гарын үсгийн мэдээлэл</h2>
+
     <input id="name" placeholder="Нэр" oninput="updateSignature()" />
     <input id="title" placeholder="Албан тушаал" oninput="updateSignature()" />
     <input id="email" placeholder="Имэйл" oninput="updateSignature()" />
@@ -63,29 +105,29 @@
     <input id="address" placeholder="Хаяг" oninput="updateSignature()" />
 
     <div class="preview-wrapper">
-      <div id="signature" class="signature-box">
-        <div style="margin-bottom: 1em; font-size: 18px;">Хүндэтгэсэн,</div>
-        <table style="font-family: Arial, sans-serif; font-size: 14px;">
+      <div id="signature" class="signature-box" style="background-color: #ffffff">
+        <div style="margin-bottom: 1em; font-size: 16px;">Хүндэтгэсэн,</div>
+        <table>
           <tr>
-            <td style="padding-right: 16px;">
-              <img id="logo" src="logo.png" alt="Лого" width="120" />
+            <td style="width: 90px;">
+              <img id="logo" src="logo.png" alt="Лого" width="100" />
             </td>
-            <td style="padding-right: 17px; border-right: 1px solid #999;">
-              <div id="out_name" style="font-weight: bold; font-size: 16px;">Нэр</div>
-              <div id="out_title">Албан тушаал</div>
-            </td>
-            <td style="padding-left: 17px;">
-              <div><strong>Имэйл:</strong> <span id="out_email">email@example.com</span></div>
-              <div><strong>Утас:</strong> <span id="out_phone">+976 88112233</span></div>
-              <div><strong>Хаяг:</strong> <span id="out_address">Улаанбаатар хот</span></div>
+            <td>
+              <div id="out_name" style="font-weight: bold; font-size: 16px; color: #0078d4;">Нэр</div>
+              <div id="out_title" style="color: #555;">Албан тушаал</div>
+              <hr style="border: none; border-top: 1px solid #ccc; margin: 8px 0 12px 0;" />
+              <div><span class="label">Имэйл:</span> <span id="out_email">email@example.com</span></div>
+              <div><span class="label">Утас:</span> <span id="out_phone">+976 88112233</span></div>
+              <div><span class="label">Хаяг:</span> <span id="out_address">Улаанбаатар хот</span></div>
             </td>
           </tr>
         </table>
       </div>
 
       <div class="buttons">
-        <button onclick="copyImage()">Зургаар хуулах</button>
-        <button onclick="downloadImage()">Зураг татах</button>
+        <button onclick="copyImage()">Хуулах</button>
+        <!-- <button onclick="downloadImage()">Зураг татах</button>
+        <button onclick="copyHTML()">Текстээр хуулах</button> -->
       </div>
     </div>
   </div>
@@ -95,7 +137,7 @@
       document.getElementById("out_name").textContent = document.getElementById("name").value || "Нэр";
       document.getElementById("out_title").textContent = document.getElementById("title").value || "Албан тушаал";
       document.getElementById("out_email").textContent = document.getElementById("email").value || "email@example.com";
-      document.getElementById("out_phone").textContent = '+976 ' + document.getElementById("phone").value || "+976 88112233";
+      document.getElementById("out_phone").textContent = '+976 ' + (document.getElementById("phone").value || "88112233");
       document.getElementById("out_address").textContent = document.getElementById("address").value || "Улаанбаатар хот";
     }
 
@@ -115,10 +157,32 @@
         canvas.toBlob(blob => {
           const item = new ClipboardItem({ "image/png": blob });
           navigator.clipboard.write([item])
-            .then(() => alert("Зураг амжилттай хуулагдлаа!"))
+            .then(() => alert("Амжилттай хуулагдлаа!"))
             .catch(err => alert("Хуулахад алдаа гарлаа: " + err));
         });
       });
+    }
+
+    function copyHTML() {
+      const signature = document.getElementById("signature").innerHTML;
+      const tempEl = document.createElement("div");
+      tempEl.innerHTML = signature;
+      document.body.appendChild(tempEl);
+
+      const range = document.createRange();
+      range.selectNode(tempEl);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+
+      try {
+        document.execCommand("copy");
+        alert("Текст амжилттай хуулагдлаа!");
+      } catch (err) {
+        alert("Текст хуулахад алдаа гарлаа: " + err);
+      }
+
+      window.getSelection().removeAllRanges();
+      document.body.removeChild(tempEl);
     }
   </script>
 </body>
